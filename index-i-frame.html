@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Multi Search Portal — search the web instantly using Google, Bing, DuckDuckGo, Yahoo, Baidu, and Yandex from one simple page.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi Search Engine Portal</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="preload" href="favicon.png" as="image">
+
+  <!-- Google Custom Search Engine script -->
+  <script>
+    const GOOGLE_CSE_ID = "YOUR_SEARCH_ENGINE_ID"; // replace with actual ID
+    if (GOOGLE_CSE_ID && GOOGLE_CSE_ID !== "YOUR_SEARCH_ENGINE_ID") {
+      const script = document.createElement("script");
+      script.src = "https://cse.google.com/cse.js?cx=" + GOOGLE_CSE_ID;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(0,0,0,0.4);
+      text-align: center;
+      padding: 15px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    header.shrink { padding: 8px; background: rgba(0,0,0,0.7); }
+    header h1 { font-size: 1.6em; margin: 0; transition: font-size 0.3s ease; }
+    header.shrink h1 { font-size: 1.3em; }
+    header p { margin: 4px 0 0; font-size: 0.9em; color: #ffeb3b; }
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .left-panel {
+      width: 35%;
+      background: rgba(255,255,255,0.08);
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .right-panel {
+      flex: 1;
+      background: #fff;
+      color: #000;
+      overflow-y: auto;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .search-box {
+      margin: 15px 0;
+      text-align: center;
+    }
+    .search-box label {
+      font-size: 1.1em;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #ffeb3b;
+    }
+    .search-box input[type="text"] {
+      width: 70%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1em;
+      outline: none;
+    }
+    .search-box input[type="submit"], .search-box button {
+      padding: 8px 14px;
+      margin-left: 6px;
+      border: none;
+      border-radius: 6px;
+      background: #ffeb3b;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .search-box input[type="submit"]:hover, .search-box button:hover { background: #ffc107; }
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 0.8em;
+      background: rgba(0,0,0,0.4);
+      color: #ffeb3b;
+    }
+  </style>
+</head>
+<body>
+  <header id="mainHeader">
+    <h1>🌐 Multi Search Portal</h1>
+    <p>Search the web with your favorite engine</p>
+  </header>
+
+  <main>
+    <div class="left-panel">
+      <!-- Google Search (CSE or fallback) -->
+      <div class="search-box" id="googleBox">
+        <label>Google</label>
+        <form action="https://www.google.com/search" method="get" target="resultsFrame" id="googleFallback">
+          <input type="text" name="q" placeholder="Search Google...">
+          <input type="submit" value="Search">
+        </form>
+        <div class="gcse-search" style="display:none;"></div>
+      </div>
+
+      <!-- Bing Search -->
+      <div class="search-box">
+        <form action="https://www.bing.com/search" method="get" target="resultsFrame">
+          <label>Bing</label>
+          <input type="text" name="q" placeholder="Search Bing...">
+          <input type="submit" value="Search">
+        </form>
+      </div>
+
+      <!-- DuckDuckGo Search (fallback link) -->
+      <div class="search-box">
+        <label>DuckDuckGo</label>
+        <input type="text" id="ddgQuery" placeholder="Search DuckDuckGo...">
+        <button onclick="openInFrame('https://duckduckgo.com/?q=' + encodeURIComponent(document.getElementById('ddgQuery').value))">Search</button>
+      </div>
+
+      <!-- Yahoo Search (fallback link) -->
+      <div class="search-box">
+        <label>Yahoo</label>
+        <input type="text" id="yahooQuery" placeholder="Search Yahoo...">
+        <button onclick="openInFrame('https://search.yahoo.com/search?p=' + encodeURIComponent(document.getElementById('yahooQuery').value))">Search</button>
+      </div>
+
+      <!-- Baidu Search (fallback link) -->
+      <div class="search-box">
+        <label>Baidu</label>
+        <input type="text" id="baiduQuery" placeholder="Search Baidu...">
+        <button onclick="openInFrame('https://www.baidu.com/s?wd=' + encodeURIComponent(document.getElementById('baiduQuery').value))">Search</button>
+      </div>
+
+      <!-- Yandex Search -->
+      <div class="search-box">
+        <form action="https://yandex.com/search/" method="get" target="resultsFrame">
+          <label>Yandex</label>
+          <input type="text" name="text" placeholder="Search Yandex...">
+          <input type="submit" value="Search">
+        </form>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <!-- Google CSE results -->
+      <div class="gcse-searchresults" style="display:none;"></div>
+      <!-- Other engines load into iframe -->
+      <iframe name="resultsFrame"></iframe>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Multi Search Portal | Powered by popular search engines
+  </footer>
+
+  <script>
+    // Shrink header on scroll
+    window.addEventListener("scroll", function() {
+      const header = document.getElementById("mainHeader");
+      if (window.scrollY > 50) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    });
+
+    // Toggle Google CSE vs fallback
+    window.addEventListener("load", function() {
+      if (GOOGLE_CSE_ID && GOOGLE_CSE_ID !== "YOUR_SEARCH_ENGINE_ID") {
+        document.querySelector(".gcse-search").style.display = "block";
+        document.querySelector(".gcse-searchresults").style.display = "block";
+        document.getElementById("googleFallback").style.display = "none";
+      }
+    });
+
+    // Helper to open links in iframe
+    function openInFrame(url) {
+      document.querySelector("iframe[name='resultsFrame']").src = url;
+    }
+  </script>
+</body>
+</html>
